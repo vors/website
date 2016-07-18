@@ -46,7 +46,23 @@ AppVeyor will call:
 
     nuget pack SimpleConsole.Tests.csproj -OutputDirectory <temp_path>
 
-To generate a `.nuspec` file for your project use the `nuget spec` command.
+For AppVeyor to *find* the `.nuspec` file, it needs to be the same name as the `.csprj` file. For example (refer to the above image, again):
+
+* project file: `SimpleConsole.Tests.csproj`
+* nuspec file: `SimpleConsole.Tests.nuspec`
+
+To pass the current AppVeyor build version into the generated NuGet package (a `.nupkg`) you can provide some *placeholders* in the `.nuspec` file:
+
+* `<version>$version$</version>`
+
+For this to work, NuGet uses the `ProductVersion` value of the dll which is set by AppVeyor by the `assembly_informational_version` value of the `AssemblyInfo.cs`. As such, you should [AssemblyInfo Patch](/docs/build-configuration/#assemblyinfo-patching) your `Assemblyinfo.cs` file, first :)
+
+e.g. `AssemblyInfo.cs`
+`assembly_informational_version: '{version}'`
+
+[Look at this sample `.nuspec` file](https://github.com/FeodorFitsner/nuget-test/blob/master/MyNuGetLib/MyNuGetLib.nuspec) to see all the available pacakge meta data which can be changed when AppVeyor `nuget pack`'s the `.nuspecs`.
+
+To generate a `.nuspec` file for your project use the `nuget spec` command or use [NuGet Package Explorer](https://github.com/NuGetPackageExplorer/NuGetPackageExplorer) to easily generate one manually.
 
 
 ### Packaging Azure Cloud Service projects
